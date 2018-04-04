@@ -77,4 +77,8 @@ public class EraseSpider extends UnaryForwardRule implements Serializable {
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
     }
+    
+    public static String getTranslation(){
+    	return "The spider selected was removed from the diagram";
+    }
 }

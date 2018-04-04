@@ -479,4 +479,5 @@ public abstract class SimpleInferenceRule<TArgs extends RuleArg> implements Infe
         return posType ? PositivePosition : NegativePosition;
     }
     // </editor-fold>
+    //abstract String getTranslation();
 }

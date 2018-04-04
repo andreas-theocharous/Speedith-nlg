@@ -30,6 +30,7 @@ import speedith.core.i18n.Translations;
 import speedith.core.lang.*;
 import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SpiderArg;
 import speedith.core.reasoning.args.SpiderRegionArg;
 import speedith.core.reasoning.rules.instructions.SelectFeetOfSpiderInstruction;
 
@@ -116,6 +117,23 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals);
     }
+    //public String getTranslation(final RuleArg args, Goals goals) throws RuleApplicationException{
+    public static String getTranslation(String selectedSpider, int selectedSub){ //throws RuleApplicationException{
+    	//SpiderRegionArg arg = getTypedRuleArgs(args);
+        //SpiderDiagram[] newSubgoals = goals.getGoals().toArray(new SpiderDiagram[goals.getGoalsCount()]);
+        //newSubgoals[arg.getSubgoalIndex()] = getSubgoal(arg, goals).transform(new SplitSpiderTransformer(arg), false);
+    	
+        //String splitSpider;
+        
+        //if (arg.getSpider() == null) {
+        //    throw new IllegalArgumentException(i18n("GERR_NULL_ARGUMENT", "arg.getSpider()"));
+        //}
+        //else
+        //	splitSpider = arg.getSpider();
+        
+        //return "Spider " + splitSpider + " is split into two spiders, t2 and t3";
+    	return selectedSpider + " in sub-diagram " + selectedSub + " was split into two spiders as seen in the diagram";
+    }
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
@@ -160,5 +178,6 @@ public class SplitSpiders extends SimpleInferenceRule<SpiderRegionArg> implement
             return null;
         }
     }
+    
     //</editor-fold>
 }

@@ -152,9 +152,9 @@ public class InferenceRules {
     public static Set<String> getKnownInferenceRules(DiagramType diagramType) {
         HashMap<String,InferenceRuleProvider<? extends RuleArg>> intermediate = new HashMap<>();
         for (Map.Entry<String, InferenceRuleProvider<? extends RuleArg> > entry : providers.entrySet()) {
-            if(entry.getValue().getApplicableTypes().contains(diagramType)) {
+            //if(entry.getValue().getApplicableTypes().contains(diagramType)) {
                 intermediate.put(entry.getKey(), entry.getValue());
-            }
+            //}
         }
         return Collections.unmodifiableSet(intermediate.keySet());
     }

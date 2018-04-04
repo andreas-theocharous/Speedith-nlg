@@ -126,16 +126,16 @@ public class Tactics {
         HashMap<String,TacticProvider> intermediate = new HashMap<>();
         if (includingLowLevel) {
             for (Map.Entry<String, TacticProvider> entry : providers.entrySet()) {
-                if (entry.getValue().getApplicableTypes().contains(diagramType)) {
+                //if (entry.getValue().getApplicableTypes().contains(diagramType)) {
                     intermediate.put(entry.getKey(), entry.getValue());
-                }
+                //}
             }
         } else {
             // only show high level rules
             for (Map.Entry<String, TacticProvider> entry : providers.entrySet()) {
-                if (entry.getValue().isHighLevel() && entry.getValue().getApplicableTypes().contains(diagramType)) {
+                //if (entry.getValue().isHighLevel() && entry.getValue().getApplicableTypes().contains(diagramType)) {
                     intermediate.put(entry.getKey(), entry.getValue());
-                }
+                //}
             }
         }
         return Collections.unmodifiableSet(intermediate.keySet());

@@ -325,6 +325,19 @@ public abstract class SpiderDiagram implements Iterable<SpiderDiagram>, SpiderDi
         }
         sb.append(']');
     }
+    
+    static String printZoneList2(Collection<Zone> zones) throws IOException {
+    	String r = "";
+        if (zones != null) {
+            Iterator<Zone> spIterator = zones.iterator();
+            if (spIterator.hasNext()) {
+                while (spIterator.hasNext()) {
+                    r = r + spIterator.next().toString2();
+                }
+            }
+        }
+        return r;
+    }
 
     public int getParentIndexOf(final int childIndex) {
         return visit(new DiagramVisitor<Integer>() {

@@ -148,4 +148,8 @@ public class RemoveShading extends SimpleInferenceRule<MultipleRuleArgs>
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
     }
+    
+    public static String getTranslation(String selectedZone, int selectedSub){
+    	return "The shading of zone " + selectedZone + "from sub-diagram " + selectedSub + " was erased";
+    }
 }

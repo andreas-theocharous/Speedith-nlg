@@ -77,4 +77,8 @@ public class ExcludedMiddle extends UnaryForwardRule implements Serializable {
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
     }
+    
+    public static String getTranslation(){
+    	return "The region selected can either be empty or contain at least one element";
+    }
 }

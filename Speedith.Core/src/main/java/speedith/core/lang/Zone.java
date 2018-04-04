@@ -314,6 +314,48 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement, Serializabl
         toString(sb);
         return sb.toString();
     }
+    
+    public String toString2() {
+    	String in = "";
+    	String out = "";
+    	
+    	if (inContours.size() > 0){
+	    	String[] inArr = new String[inContours.size()];
+	    	Iterator<String> itIn = inContours.iterator();
+	    	int inCount = 0;
+			while (itIn.hasNext()) {
+				inArr[inCount] = itIn.next();
+				inCount++;
+			}
+			in = "inside " + inArr[0];
+			for (int i = 1; i < inCount - 1; i++)
+				in = in + ", " + inArr[i];
+			if (inCount > 1)
+				in = in + " and " + inArr[inCount - 1];
+    	}
+		
+    	if (outContours.size() > 0){
+			String[] outArr = new String[outContours.size()];
+	    	Iterator<String> itOut = outContours.iterator();
+	    	int outCount = 0;
+			while (itOut.hasNext()) {
+				outArr[outCount] = itOut.next();
+				outCount++;
+			}
+			out = "out of " + outArr[0];
+			for (int i = 1; i < outCount - 1; i++)
+				out = out + ", " + outArr[i];
+			if (outCount > 1)
+				out = out + " and " + outArr[outCount - 1];
+    	}
+		
+    	if (outContours.isEmpty())
+    		return in;
+    	else if (inContours.isEmpty())
+    		return "inside no Contour";
+    	
+    	return in + ", but " + out;
+    }
 
     public SortedSet<String> getAllContours() {
         if (allContours == null) {

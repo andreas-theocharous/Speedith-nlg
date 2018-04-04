@@ -1,6 +1,6 @@
 spiderdrawer/ui/MainForm$1.class
-spiderdrawer/ui/MessageBox.class
 spiderdrawer/ui/FileChooserForm.class
+spiderdrawer/ui/MessageBox.class
 spiderdrawer/ui/MainForm$3.class
 spiderdrawer/shape/Connective.class
 spiderdrawer/ui/MainForm$13.class
@@ -12,8 +12,8 @@ spiderdrawer/shape/interfaces/Movable.class
 spiderdrawer/ui/MainForm$11.class
 spiderdrawer/ui/FileChooserForm$2.class
 spiderdrawer/ui/MainForm$15.class
-spiderdrawer/shape/Box.class
 spiderdrawer/shape/interfaces/Drawable.class
+spiderdrawer/shape/Box.class
 spiderdrawer/shape/interfaces/Deletable.class
 spiderdrawer/ui/MainForm$9.class
 spiderdrawer/shape/Point.class
@@ -40,15 +40,15 @@ spiderdrawer/ui/DrawingPanel.class
 spiderdrawer/ui/MainForm$7.class
 spiderdrawer/Action$ActionType.class
 spiderdrawer/Main.class
-spiderdrawer/shape/Line.class
 spiderdrawer/ui/DrawingPanel$3.class
+spiderdrawer/shape/Line.class
 spiderdrawer/shape/interfaces/Shape.class
-spiderdrawer/ui/MainForm$5.class
 spiderdrawer/ui/DrawingPanel$1.class
+spiderdrawer/ui/MainForm$5.class
 spiderdrawer/ui/FileChooserForm$1.class
 spiderdrawer/exception/EmptyContainerException.class
-spiderdrawer/shape/Logical.class
 spiderdrawer/ui/MainForm$10.class
+spiderdrawer/shape/Logical.class
 spiderdrawer/ui/MainForm$4.class
 spiderdrawer/ui/DrawingPanel$2.class
 spiderdrawer/recognizer/SpiderRecognizer.class

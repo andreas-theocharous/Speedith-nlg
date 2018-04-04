@@ -71,6 +71,10 @@ public class Combining extends UnaryForwardRule implements Serializable {
   public RuleApplicationInstruction<SubDiagramIndexArg> getInstructions() {
     return new SelectSingleOperatorInstruction(Operator.Conjunction);
   }
+  
+  public static String getTranslation(int selectedSub){
+  	return "The unary diagrams in sub-diagram " + selectedSub + " were combined in one as seen below";
+  }
 
   @Override
   protected Transformer getSententialTransformer(SubDiagramIndexArg arg, ApplyStyle applyStyle) {

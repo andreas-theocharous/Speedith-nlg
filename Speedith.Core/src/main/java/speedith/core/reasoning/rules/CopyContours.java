@@ -33,6 +33,8 @@ import speedith.core.reasoning.*;
 import speedith.core.reasoning.args.ContourArg;
 import speedith.core.reasoning.args.MultipleRuleArgs;
 import speedith.core.reasoning.args.RuleArg;
+import speedith.core.reasoning.args.SubDiagramIndexArg;
+import speedith.core.reasoning.args.ZoneArg;
 import speedith.core.reasoning.rules.instructions.SelectContoursInstruction;
 import speedith.core.reasoning.rules.transformers.CopyContoursTransformer;
 
@@ -99,6 +101,92 @@ public class CopyContours extends SimpleInferenceRule<MultipleRuleArgs> implemen
     @Override
     public RuleApplicationInstruction<MultipleRuleArgs> getInstructions() {
         return new SelectContoursInstruction();
+    }
+    
+    public static String getTranslation(MultipleRuleArgs args){
+    	ContourArg conArg = (ContourArg) args.get(0);
+		String ecContour = conArg.getContour();
+		int ecSub = conArg.getSubDiagramIndex();
+    	if (args.size() > 1){
+    		String selectedContours = ecContour;
+    		//String selectedSubs = String.valueOf(ecSub);
+    		for (int i = 1; i < args.size() - 1; i++){
+    			conArg = (ContourArg) args.get(i);
+    			ecContour = conArg.getContour();
+      		  	ecSub = conArg.getSubDiagramIndex();
+      		  	selectedContours = selectedContours + ", " + ecContour;
+      		  	//selectedSubs = selectedSubs + ", " + ecSub;
+    		}
+    		conArg = (ContourArg) args.get(args.size() - 1);
+			ecContour = conArg.getContour();
+  		  	//ecSub = conArg.getSubDiagramIndex();
+  		  	selectedContours = selectedContours + " and " + ecContour;
+  		  	//selectedSubs = selectedSubs + " and " + ecSub;
+  	    	return "Contours " + selectedContours + " were copied from sub-diagram " + ecSub 
+  	    			+ " to the other sub-diagrams of the diagram";
+    	}
+    	else{
+    		return "Contour " + ecContour + " was copied from sub-diagram " + ecSub 
+    				+ " to the other sub-diagrams of the diagram";
+    	}
+    }
+    
+    public static String getTranslation2(MultipleRuleArgs args){
+    	ZoneArg zoneArg = (ZoneArg) args.get(0);
+		String csZone = zoneArg.getZone().toString();
+		int csSub = zoneArg.getSubDiagramIndex();
+    	if (args.size() > 1){
+    		String selectedZones = csZone;
+    		//String selectedSubs = String.valueOf(ecSub);
+    		for (int i = 1; i < args.size() - 1; i++){
+    			zoneArg = (ZoneArg) args.get(i);
+    			csZone = zoneArg.getZone().toString();
+      		  	csSub = zoneArg.getSubDiagramIndex();
+      		  	selectedZones = selectedZones + ", " + csZone;
+      		  	//selectedSubs = selectedSubs + ", " + ecSub;
+    		}
+    		zoneArg = (ZoneArg) args.get(args.size() - 1);
+    		csZone = zoneArg.getZone().toString();
+  		  	//ecSub = conArg.getSubDiagramIndex();
+  		  	selectedZones = selectedZones + " and " + csZone;
+  		  	//selectedSubs = selectedSubs + " and " + ecSub;
+  	    	return "The shading in zones  " + selectedZones + " was copied from sub-diagram " + csSub 
+  	    			+ " to the other sub-diagrams of the diagram";
+    	}
+    	else{
+    		return "The shading in zone  " + csZone + " was copied from sub-diagram " + csSub 
+  	    			+ " to the other sub-diagrams of the diagram";
+    	}
+    }
+    
+    public static String getTranslation3(MultipleRuleArgs args){
+    	SubDiagramIndexArg target = (SubDiagramIndexArg) args.get(0);
+    	int targetSub = target.getSubDiagramIndex();
+    	ContourArg conArg = (ContourArg) args.get(1);
+		String icContour = conArg.getContour();
+		int icSub = conArg.getSubDiagramIndex();
+    	if (args.size() > 2){
+    		String selectedContours = icContour;
+    		//String selectedSubs = String.valueOf(ecSub);
+    		for (int i = 2; i < args.size() - 1; i++){
+    			conArg = (ContourArg) args.get(i);
+    			icContour = conArg.getContour();
+      		  	icSub = conArg.getSubDiagramIndex();
+      		  	selectedContours = selectedContours + ", " + icContour;
+      		  	//selectedSubs = selectedSubs + ", " + ecSub;
+    		}
+    		conArg = (ContourArg) args.get(args.size() - 1);
+			icContour = conArg.getContour();
+  		  	//ecSub = conArg.getSubDiagramIndex();
+  		  	selectedContours = selectedContours + " and " + icContour;
+  		  	//selectedSubs = selectedSubs + " and " + ecSub;
+  	    	return "Contours " + selectedContours + " from sub-diagram " + icSub 
+  	    			+ " were introduced to sub-diagram " + targetSub;
+    	}
+    	else{
+    		return "Contour " + icContour + " from sub-diagram " + icSub 
+  	    			+ " was introduced to sub-diagram " + targetSub;
+    	}
     }
 
     private ArrayList<ContourArg> getContourArgsFrom(RuleArg args) throws RuleApplicationException {

@@ -79,4 +79,8 @@ case class Region(zones: Set[Zone]) extends Comparable[Region] {
   override def toString: String = {
     toString(new StringBuilder()).toString
   }
+
+  def toString2: String = {
+	SpiderDiagram.printZoneList2(sortedZones)
+  }
 }

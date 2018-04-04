@@ -113,4 +113,8 @@ implements BasicInferenceRule<MultipleRuleArgs>, ForwardRule<MultipleRuleArgs>, 
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
     }
+    
+    public static String getTranslation(String selectedZone, int selectedSub){
+    	return "The shaded zone " + selectedZone + " from sub-diagram " + selectedSub + " was removed from the diagram";
+    }
 }

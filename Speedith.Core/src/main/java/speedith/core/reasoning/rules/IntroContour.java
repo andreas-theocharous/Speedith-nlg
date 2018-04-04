@@ -144,4 +144,8 @@ public class IntroContour extends SimpleInferenceRule<MultipleRuleArgs>
     public Set<DiagramType> getApplicableTypes() {
         return applicableTypes;
     }
+    
+    public static String getTranslation(){
+    	return "A new contour was introduced in the selected region";
+    }
 }

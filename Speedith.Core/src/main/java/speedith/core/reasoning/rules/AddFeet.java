@@ -116,6 +116,11 @@ public class AddFeet extends SimpleInferenceRule<SpiderRegionArg> implements Bas
     public Set<DiagramType> getApplicableTypes() {
         return applicableTo;
     }
+    
+    public static String getTranslation(String selectedSpider, int selectedSub, String selectedZone){
+    	return "A foot for spider " + selectedSpider + " in sub-diagram " + selectedSub +
+    			" was added in zone " + selectedZone;
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="The general 'apply' method">

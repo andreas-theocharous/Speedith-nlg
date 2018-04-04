@@ -57,6 +57,8 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> impleme
 
     private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram,DiagramType.EulerDiagram);
     private static final long serialVersionUID = -869717711275052747L;
+
+	private static final ContourArg ContourArg = null;
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Inference Rule Implementation">
@@ -110,6 +112,33 @@ public class RemoveContour extends SimpleInferenceRule<MultipleRuleArgs> impleme
     @Override
     public RuleApplicationResult applyForwards(RuleArg args, Goals goals) throws RuleApplicationException {
         return apply(args, goals, ApplyStyle.Forward);
+    }
+    
+    public static String getTranslation(MultipleRuleArgs args){
+    	ContourArg conArg = (ContourArg) args.get(0);
+		String ecContour = conArg.getContour();
+		int ecSub = conArg.getSubDiagramIndex();
+    	if (args.size() > 1){
+    		String selectedContours = ecContour;
+    		//String selectedSubs = String.valueOf(ecSub);
+    		for (int i = 1; i < args.size() - 1; i++){
+    			conArg = (ContourArg) args.get(i);
+    			ecContour = conArg.getContour();
+      		  	ecSub = conArg.getSubDiagramIndex();
+      		  	selectedContours = selectedContours + ", " + ecContour;
+      		  	//selectedSubs = selectedSubs + ", " + ecSub;
+    		}
+    		conArg = (ContourArg) args.get(args.size() - 1);
+			ecContour = conArg.getContour();
+  		  	ecSub = conArg.getSubDiagramIndex();
+  		  	selectedContours = selectedContours + " and " + ecContour;
+  		  	//selectedSubs = selectedSubs + " and " + ecSub;
+  	    	return "Contours " + selectedContours + " from sub-diagram " + ecSub 
+  	    			+ ", were removed from the diagram";
+    	}
+    	else{
+    		return "Contour " + ecContour + " from sub-diagram " + ecSub + " was removed from the diagram";
+    	}
     }
 
     protected RuleApplicationResult apply(final RuleArg args, Goals goals, ApplyStyle applyStyle) throws RuleApplicationException {
