@@ -1,0 +1,7 @@
+spiderdrawer
+spiderdrawer.exception
+spiderdrawer.recognizer
+spiderdrawer.shape
+spiderdrawer.shape.containers
+spiderdrawer.shape.interfaces
+spiderdrawer.ui
