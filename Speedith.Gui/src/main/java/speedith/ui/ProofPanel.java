@@ -63,7 +63,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
 
     private AutomaticProver prover;
 
-    private List<SubgoalsPanel> subgoals;
+    public List<SubgoalsPanel> subgoals;
 
     private Goals selected;
 
@@ -216,6 +216,8 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
     }
 
     public Goals getSelected() { return selected; }
+    
+    public List<SubgoalsPanel> getSubgoals() { return subgoals; }
 
 
     //</editor-fold>
@@ -349,9 +351,13 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
      * @param gbc the constraints for the layout of the panel
      * @param sgp the subgoalspanel to be added to the proof panel
      */
-    private void addSubgoal(GridBagConstraints gbc, SubgoalsPanel sgp) {
+    public void addSubgoal(GridBagConstraints gbc, SubgoalsPanel sgp) {
         pnlGoals.add(sgp, gbc);
         subgoals.add(sgp);
+    }
+    
+    public void addTranslation(GridBagConstraints gbc, JTextArea t) {
+        pnlGoals.add(t, gbc);
     }
 
     private <TRuleArg extends RuleArg> void addGoals(int stepIndex, Goals goals, Inference<? super TRuleArg,?> rule, TRuleArg args, InferenceApplication application) {
@@ -475,7 +481,7 @@ public class ProofPanel extends javax.swing.JPanel implements Proof, AutomaticPr
         }
     }
 
-    private void cleanProofPanel() {
+    public void cleanProofPanel() {
         pnlGoals.removeAll();
         subgoals.clear();
         selected = null;

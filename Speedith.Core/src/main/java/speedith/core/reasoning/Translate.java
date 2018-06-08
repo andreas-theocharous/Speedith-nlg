@@ -51,11 +51,7 @@ import speedith.core.reasoning.rules.RemoveShading;
 import speedith.core.reasoning.rules.SplitSpiders;
 
 /**
- * Contains the result data of an application of an inference rule (see {@link
- * InferenceRule#apply(speedith.core.reasoning.args.RuleArg, speedith.core.reasoning.Goals)
- * the apply method}).
- * <p>Instances of this class (and its derived classes) are immutable.</p>
- * @author Matej Urbas [matej.urbas@gmail.com]
+ * @author Andreas Theocharous [at814@cam.ac.uk]
  */
 public class Translate {
 
@@ -70,19 +66,34 @@ public class Translate {
      * @param goals the goals that remained after the application of an
      * inference rule.
      */
-	/*
-	public static String nlTranslate(String selectedRule, ProofPanel panel){
-		Goals g2 = panel.getLastGoals();
-        SpiderDiagram[] sbg2 = null;
-        if (!panel.isFinished())
-        	sbg2 = g2.getGoals().toArray(new SpiderDiagram[g2.getGoalsCount()]);
-        RuleArg arg = panel.getInferenceApplicationAt(panel.getInferenceApplicationCount()-1).getRuleArguments();
-        //nlproof.setText(nlproof.getText() + (Translations.nltranslate(sbg1, sbg2, selectedRule.toString(), arg)) + "\n");
-      
-		return ruleTranslation(null, sbg2, selectedRule, arg);
-		
+	
+	private static String[] subs = new String[50];
+	private static String[] csubs = new String[50];
+	
+	public static void diagramNumbering(SpiderDiagram sd){
+		int curr = 0;
+		int sdn = sd.getSubDiagramAt(1).getSubDiagramCount();
+		for (int i = 1; i <= sdn + 1; i++){
+			if (sd.getSubDiagramAt(i).getSubDiagramCount() == 1){
+				curr++;
+				subs[i] = "d" + curr;
+			}
+		}
 	}
-	*/
+	
+	public static void conjunctionNumbering(SpiderDiagram sd){
+		int curr = 0;
+		int sdn = sd.getSubDiagramAt(1).getSubDiagramCount();
+		for (int i = 1; i <= sdn + 1; i++){
+			String s = sd.getSubDiagramAt(i).toString();
+			if ((s.length() > 25) && (s.charAt(25) == '&')){
+				curr++;
+				csubs[i] = "c" + curr;
+			}
+		}
+	}
+	
+	
 	public static int PossibleTactic(ArrayList<String> rules, int start, String r){
 		Set<String> infSet = new HashSet<String>();
 		if ((r.equals("Introduce All Contours")) || (r.equals("Introduce All Contours (Deepest)")))
@@ -124,73 +135,28 @@ public class Translate {
 		else
 			return i + 1;
 	}
-	
-	/*
-	public static int PossibleIntroShaded(ArrayList<String> rules, int start){
-		int i = start;
-		while (i < rules.size()){
-			if (rules.get(i).equals("Introduce Shaded Zone")){
-				while (rules.get(i).equals("Introduce Shaded Zone")){
-					i++;
-				}
-				return i;
-			}
-			else
-				i++;
-		}
-		return i;
-	}
-	*/
-	
-	public static String initTranslation(SpiderDiagram sd){
-		int sdid = sd.getSubDiagramAt(1).getSubDiagramCount() + 1;
-		PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sd.getSubDiagramAt(1);
-		PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sd.getSubDiagramAt(sdid);
-		
-		
-		return "";
-	}
-	
     
     public static String ruleTranslation(SpiderDiagram[] sdg1, SpiderDiagram[] sdg2, String rule, RuleArg arg, List<InferenceApplication> apps, Goals initGoals)
     {
   	  CompoundSpiderDiagram c1 = null, c2 = null;
       PrimarySpiderDiagram sb1 = null, sb2 = null;
   	  if (rule.equals("Split Spider")){
-  		/*
-        	if (!sdg1[0].toString().equals("NullSD")){
-        		c1 = (CompoundSpiderDiagram) sdg1[0];
-        		sb1 = (PrimarySpiderDiagram) c1.getOperand(0);
-        		c2 = (CompoundSpiderDiagram) sdg2[0];
-        		c2 = (CompoundSpiderDiagram) c2.getOperand(0);
-        		sb2 = (PrimarySpiderDiagram) c2.getOperand(0);
-        		if (sb2 == null)
-        			nlproof.setText(nlproof.getText() + "NULL");
-        		else if (sb2.getSpidersCount() == 0)
-        			nlproof.setText(nlproof.getText() + "No Spiders");
-        		//else if (!sb1.getSpiderHabitat(sb1.getSpiders().first()).equals(sb2.getSpiderHabitat(sb2.getSpiders().first())))
-        			//nlproof.setText(nlproof.getText() + sb1.getSpiders().first() + " was split into two as seen in the diagram"));
-        		else{
-        			//nlproof.setText(nlproof.getText() + SplitSpiders.getTranslation() + "\n");
-        			
-        		}
-        	}
-        	else
-        		nlproof.setText("Null diagram");
-        	*/
         SpiderRegionArg ssarg = (SpiderRegionArg) arg;
   		String ssSpider = ssarg.getSpider();
   		String ssRegion = ssarg.getRegion().toString();
   		int ssSub = ssarg.getSubDiagramIndex();
   		int subgoal = ssarg.getSubgoalIndex();
+  		
+  		diagramNumbering(sdg1[subgoal]);
+  		
   		PrimarySpiderDiagram sd = (PrimarySpiderDiagram) sdg1[subgoal].getSubDiagramAt(ssSub);
 	    String initRegion = sd.getSpiderHabitat(ssSpider).toString();
 	    PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg2[subgoal].getSubDiagramAt(ssSub + 1);
 	    PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sdg2[subgoal].getSubDiagramAt(ssSub + 2);
 	    String habitat1 = sd1.getSpiderHabitat(ssSpider).toString();
 	    String habitat2 = sd2.getSpiderHabitat(ssSpider).toString();
-  		//nlproof.setText(nlproof.getText() + SplitSpiders.getTranslation(ssSpider, ssSub) + "\n");
-  		return "split Spider was applied to " + ssSpider + " from sub-diagram " + ssSub + " which had habitat " 
+
+  		return "split Spider was applied to " + ssSpider + " from " + subs[ssSub] + " which had habitat " 
   				+ initRegion + ". The result is two disjunctively connected sub-diagrams"
   				+ " both containing " + ssSpider + " but now the habitat in the first is " + habitat1
   				+ " and in the second it is " + habitat2;
@@ -209,6 +175,9 @@ public class Translate {
 		  
 		  SortedMap<String, Region> h1 = sd1.getHabitats();
 		  SortedMap<String, Region> h2 = sd2.getHabitats();
+		  
+		  diagramNumbering(sdg1[subgoal]);
+		  conjunctionNumbering(sdg1[subgoal]);
 		  
 		  String spiders1 = "";
 		  String spiders2 = "";
@@ -267,7 +236,7 @@ public class Translate {
 		  if ((c == 0) && (csh == 0))
 			  middle = "contains the ";
 		  else
-			  middle = ", which only existed in sub-diagram " + cSub1;
+			  middle = ", which only existed in " + subs[cSub1];
 		  
 		  String[] spArr2 = new String[sp2.size()];
 		  Iterator<String> it2 = sp2.iterator();
@@ -312,19 +281,32 @@ public class Translate {
 				  shaded2 = shaded2 + ", " + shArr2[i];
 		  }
 		  if ((c > 0) || (csh > 0)){
-			  shaded2 = shaded2 + ", which only existed in sub-diagram " + cSub2;
+			  shaded2 = shaded2 + ", which only existed in " + subs[cSub2];
 			  if (middle.charAt(0) == ',')
 				  middle = middle + ", as well as the ";
 		  }
-		  
-
   		  
-  	      return "the conjunctively connected diagrams in sub-diagram " + (cSub1 - 1) 
+		  if ((spiders1.length() > 0) || (spiders2.length() > 0)){
+			  if ((shaded1.length() > 0) || ((shaded2.length() > 0) && (shaded2.charAt(0) != ',')))
+				  return "the conjunctively connected diagrams in " + (csubs[cSub1 - 1]) 
+	  	    		  + " were combined in one unitary diagram. The shaded zones of the new diagram"
+	  	    		  + " are those that were shaded in at least one sub-diagram and the spiders" 
+	  	    		  + " are all those which were either in one or both sub-diagrams. If a zone"
+	  	    		  + " had spiders in both sub-diagrams, the spiders were copied from the zone" 
+	  	    		  + " with the largest number of spiders. Specifically, the new diagram "
+	  	    		  + spiders1 + shaded1 + middle + spiders2 + shaded2;
+			  else
+				  return "the conjunctively connected diagrams in " + (csubs[cSub1 - 1]) 
+	  	    		  + " were combined in one unitary diagram. The spiders in the new diagram" 
+	  	    		  + " are all those which were either in one or both sub-diagrams. If a zone"
+	  	    		  + " had spiders in both sub-diagrams, the spiders were copied from the zone" 
+	  	    		  + " with the largest number of spiders. Specifically, the new diagram "
+	  	    		  + spiders1 + shaded1 + middle + spiders2 + shaded2;
+		  }
+		  
+		  return "the conjunctively connected diagrams in " + (csubs[cSub1 - 1]) 
   	    		  + " were combined in one unitary diagram. The shaded zones of the new diagram"
-  	    		  + " are those that were shaded in at least one sub-diagram and the spiders" 
-  	    		  + " are all those which were either in one or both sub-diagrams. If a zone"
-  	    		  + " had spiders in both sub-diagrams, the spiders were copied from the zone" 
-  	    		  + " with the largest number of spiders. Specifically, the new diagram "
+  	    		  + " are those that were shaded in at least one sub-diagram. Specifically, the new diagram "
   	    		  + spiders1 + shaded1 + middle + spiders2 + shaded2;
   	  }
   	  else if (rule.equals("Erase Spider")){
@@ -332,12 +314,13 @@ public class Translate {
   		  //nlproof.setText(proofPanel1.getInferenceApplicationAt(proofPanel1.getInferenceApplicationCount()-1).getRuleArguments().toString());
   	  }
   	  else if (rule.equals("Add Feet")){
-  		  //nlproof.setText(nlproof.getText() + AddFeet.getTranslation() + "\n");
   		  SpiderRegionArg srArg = (SpiderRegionArg) arg;
+  		  int subgoal = srArg.getSubgoalIndex();
+  		  diagramNumbering(sdg1[subgoal]);
   		  String afSpider = srArg.getSpider();
   		  int afSub = srArg.getSubDiagramIndex();
   		  String afZone = srArg.getRegion().toString2();
-  		  return "a foot into the zone " + afZone + " was added to spider " + afSpider + " in sub-diagram " + afSub;
+  		  return "a foot into the zone " + afZone + " was added to spider " + afSpider + " in " + subs[afSub];
   	  }
   	  else if (rule.equals("Copy Contour")){
   		  MultipleRuleArgs mra = (MultipleRuleArgs) arg;
@@ -346,30 +329,27 @@ public class Translate {
   		  int ccSub = conArg.getSubDiagramIndex();
   		  int subgoal = conArg.getSubgoalIndex();
 		  int parent = sdg1[subgoal].getParentIndexOf(ccSub);
+		  diagramNumbering(sdg1[subgoal]);
 		  int target = ccSub - 1;
 		  if (parent == (ccSub - 1))
 			  target = ccSub + 1;
   		  if (mra.size() > 1){
   			  String selectedContours = ccContour;
-			//String selectedSubs = String.valueOf(ecSub);
   			  for (int i = 1; i < mra.size() - 1; i++){
   				  conArg = (ContourArg) mra.get(i);
   				  ccContour = conArg.getContour();
   				  ccSub = conArg.getSubDiagramIndex();
   				  selectedContours = selectedContours + ", " + ccContour;
-			  	//selectedSubs = selectedSubs + ", " + ecSub;
   			  }
   			  conArg = (ContourArg) mra.get(mra.size() - 1);
   			  ccContour = conArg.getContour();
-		  	//ecSub = conArg.getSubDiagramIndex();
   			  selectedContours = selectedContours + " and " + ccContour;
-		  	//selectedSubs = selectedSubs + " and " + ecSub;
-  			  return "contours " + selectedContours + " were copied from sub-diagram " + ccSub 
-  					  + " to sub-diagram " + target;
+  			  return "contours " + selectedContours + " were copied from " + subs[ccSub]
+  					  + " to " + subs[target];
   		  }
   		  else{
-  			  return "contour " + ccContour + " was copied from sub-diagram " + ccSub 
-  					  + " to sub-diagram " + target;
+  			  return "contour " + ccContour + " was copied from " + subs[ccSub]
+  					  + " to " + subs[target];
   		  }
   	  }
   	  else if (rule.equals("Excluded Middle")){
@@ -380,6 +360,8 @@ public class Translate {
   		  SubDiagramIndexArg target = (SubDiagramIndexArg) mra.get(0);
   		  int targetSub = target.getSubDiagramIndex();
   		  ContourArg conArg = (ContourArg) mra.get(1);
+  		  int subgoal = conArg.getSubgoalIndex();
+  		  diagramNumbering(sdg1[subgoal]);
   		  String icContour = conArg.getContour();
   		  int icSub = conArg.getSubDiagramIndex();
   		  if (mra.size() > 2){
@@ -398,17 +380,19 @@ public class Translate {
   			  selectedContours = selectedContours + " and " + icContour;
   		  	//selectedSubs = selectedSubs + " and " + ecSub;
   			  return "contours " + selectedContours
-  					  + " were introduced to sub-diagram " + targetSub;
+  					  + " were introduced to " + subs[targetSub];
   		  }
   		  else{
   			  return "a new contour with label " + icContour
-  					  + " was introduced to sub-diagram " + targetSub;
+  					  + " was introduced to " + subs[targetSub];
   		  }	
   	  }
   	  
   	  else if (rule.equals("Erase Contour")){
   		  MultipleRuleArgs mra = (MultipleRuleArgs) arg;
   		  ContourArg conArg = (ContourArg) mra.get(0);
+  		  int subgoal = conArg.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
   		  String ecContour = conArg.getContour();
   		  int ecSub = conArg.getSubDiagramIndex();
   		  if (mra.size() > 1){
@@ -426,10 +410,10 @@ public class Translate {
   			  ecSub = conArg.getSubDiagramIndex();
   			  selectedContours = selectedContours + " and " + ecContour;
   		  	//selectedSubs = selectedSubs + " and " + ecSub;
-  			  return "contours " + selectedContours + " were removed from sub-diagram " + ecSub;
+  			  return "contours " + selectedContours + " were removed from " + subs[ecSub];
   		  }
   		  else{
-  			  return "contour " + ecContour + " was removed from sub-diagram " + ecSub;
+  			  return "contour " + ecContour + " was removed from " + subs[ecSub];
   		  }
   		  /*
   		  try{
@@ -446,9 +430,11 @@ public class Translate {
   	  else if (rule.equals("Erase Shading")){
   		  MultipleRuleArgs mra = (MultipleRuleArgs) arg;
   		  ZoneArg esArg = (ZoneArg) mra.get(0);
+  		  int subgoal = esArg.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
   		  String esZone = esArg.getZone().toString2();
   		  int esSub = esArg.getSubDiagramIndex();
-  		  return "the shading of zone " + esZone + " was removed from sub-diagram " + esSub;
+  		  return "the shading of zone " + esZone + " was removed from " + esSub;
   	  }
   	  else if (rule.equals("Remove Shaded Zone")){
   		  MultipleRuleArgs mra = (MultipleRuleArgs) arg;
@@ -463,31 +449,27 @@ public class Translate {
   		  String csZone = zoneArg.getZone().toString2();
   		  int csSub = zoneArg.getSubDiagramIndex();
   		  int subgoal = zoneArg.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
   		  int parent = sdg1[subgoal].getParentIndexOf(csSub);
   		  int target = csSub - 1;
   		  if (parent == (csSub - 1))
   			  target = csSub + 1;
   		  if (mra.size() > 1){
   			  String selectedZones = csZone;
-    		//String selectedSubs = String.valueOf(ecSub);
   			  for (int i = 1; i < mra.size() - 1; i++){
   				  zoneArg = (ZoneArg) mra.get(i);
   				  csZone = zoneArg.getZone().toString2();
-  				  //csSub = zoneArg.getSubDiagramIndex();
   				  selectedZones = selectedZones + ", " + csZone;
-      		  	//selectedSubs = selectedSubs + ", " + ecSub;
   			  }
   			  zoneArg = (ZoneArg) mra.get(mra.size() - 1);
   			  csZone = zoneArg.getZone().toString2();
-  		  	//ecSub = conArg.getSubDiagramIndex();
   			  selectedZones = selectedZones + " and " + csZone;
-  		  	//selectedSubs = selectedSubs + " and " + ecSub;
-  			  return "the shading in zones  " + selectedZones + " was copied from sub-diagram " + csSub 
-  					  + " to sub-diagram " + target;
+  			  return "the shading in zones  " + selectedZones + " was copied from " + subs[csSub] 
+  					  + " to " + subs[target];
   		  }
   		  else{
-  			  return "the shading in zone  " + csZone + " was copied from sub-diagram " + csSub 
-  					+ " to sub-diagram " + target;
+  			  return "the shading in zone  " + csZone + " was copied from " + subs[csSub] 
+  					+ " to " + subs[target];
   		  }	  
   	  }
   	  else if (rule.equals("Copy Spider")){
@@ -495,63 +477,81 @@ public class Translate {
   		  String csSpider = csarg.getSpider();
   		  int csSub = csarg.getSubDiagramIndex();
   		  int subgoal = csarg.getSubgoalIndex();
+  		  diagramNumbering(sdg1[subgoal]);
 		  int parent = sdg1[subgoal].getParentIndexOf(csSub);
 		  int target = csSub - 1;
 		  if (parent == (csSub - 1))
 			  target = csSub + 1;
-  		  return "spider " + csSpider + " from sub-diagram " + csSub 
-  				  + " was copied to sub-diagram " + target;
+  		  return "spider " + csSpider + " from " + subs[csSub] 
+  				  + " was copied to " + subs[target];
   	  }
   	  else if (rule.equals("Conjunction Elimination")){
   		  MultipleRuleArgs mra = (MultipleRuleArgs) arg;
   		  SubDiagramIndexArg cearg1 = (SubDiagramIndexArg) mra.get(0);
   		  SubDiagramIndexArg cearg2 = (SubDiagramIndexArg) mra.get(1);
+  		  int subgoal = cearg1.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
+		  conjunctionNumbering(sdg1[subgoal]);
 		  int ceSub1 = cearg1.getSubDiagramIndex();
 		  int ceSub2 = cearg2.getSubDiagramIndex();
-		  return "sub-diagram " + ceSub1 + " is a conjunction of sub-diagrams. Since" +
+		  return "" + csubs[ceSub1] + " is a conjunction of sub-diagrams. Since" +
 				  " conjunction requires that both diagrams are true, we can use any diagram" +
-				  " on its own. In this case, the diagram was reduced to sub-diagram " + ceSub2 
+				  " on its own. In this case, the diagram was reduced to " + subs[ceSub2] 
 				  + ".";
 	  }
   	  else if (rule.equals("Double Negation Elimination")){
   		  SubDiagramIndexArg dnearg = (SubDiagramIndexArg) arg;
+  		  int subgoal = dnearg.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
 		  int dneSub = dnearg.getSubDiagramIndex();
-		  return "double negation elimination was used in sub-diagram " + dneSub;
+		  return "double negation elimination was used in " + subs[dneSub];
 	  }
   	  else if (rule.equals("Double Negation Introduction")){
   		  SubDiagramIndexArg dniarg = (SubDiagramIndexArg) arg;
+  		  int subgoal = dniarg.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
 		  int dniSub = dniarg.getSubDiagramIndex();
-		  return "double negation was introduced in sub-diagram " + dniSub;
+		  return "double negation was introduced in " + subs[dniSub];
 	  }
   	  else if ((rule.equals("Idempotency")) || (rule.equals("Idempotency (Syntactic)"))){
   		  SubDiagramIndexArg iarg = (SubDiagramIndexArg) arg;
+  		  int subgoal = iarg.getSubgoalIndex();
+		  conjunctionNumbering(sdg1[subgoal]);
 		  int iSub = iarg.getSubDiagramIndex();
-		  return "sub-diagram " + iSub + " is a conjunction of two equal sub-diagrams."
+		  return "" + csubs[iSub] + " is a conjunction of two equal sub-diagrams."
 				  + " Therefore, we can reduce this to one unitary sub-diagram using the"
 				  + " Idempotency rule.";
 	  }
 	  else if ((rule.equals("Implication Tautology")) || (rule.equals("Trivial Implication Tautology"))){
 		  SubDiagramIndexArg itarg = (SubDiagramIndexArg) arg;
 		  int itSub = itarg.getSubDiagramIndex();
-		  return "implication tautology was used in sub-diagram " + itSub + " to simplify the diagram";
+		  return "implication tautology was used to finish the proof";
 	  }
 	  else if (rule.equals("Negation elimination")){
 		  SubDiagramIndexArg nearg = (SubDiagramIndexArg) arg;
 		  int neSub = nearg.getSubDiagramIndex() + 1;
 		  int subgoal = nearg.getSubgoalIndex();
+		  diagramNumbering(sdg1[subgoal]);
   		  PrimarySpiderDiagram sd = (PrimarySpiderDiagram) sdg1[subgoal].getSubDiagramAt(neSub);
   		  int spiders = sd.getSpidersCount();
   		  int shadedZones = sd.getShadedZonesCount();
   		  String firstSpider = sd.getSpiders().first();
-  		  String zone = sd.getSpiderHabitat(firstSpider).toString();
-  		  if (shadedZones == 0)
-  			  return "negation elimination was used in sub-diagram " + (neSub - 1)
+  		  String zone = sd.getSpiderHabitat(firstSpider).toString2();
+  		  if (shadedZones == 0){
+  			  if (spiders == 1)
+  				return "negation elimination was used in " + subs[neSub - 1]
+  					  + ". The negation states that there must be strictly less than one" 
+  					  + " spider in zone " + zone + ". Therefore, the zone " + zone 
+  					  + " in the resulting diagram, is shaded and contains no spiders."; 
+  		  
+  			  return "negation elimination was used in " + subs[neSub - 1]
 				  + ". The negation states that there must be less than " + spiders 
 				  + " spiders in zone " + zone + ". Therefore, " + spiders 
 				  + " disjunctively connected sub-diagrams were created ranging from 0 to "
 				  + (spiders - 1) + " spiders in zone " + zone;
+  		  }
   		  else
-  			  return "negation elimination was used in sub-diagram " + (neSub - 1)
+  			  return "negation elimination was used in " + subs[neSub - 1]
   				  + ". The negation states that there can't be exactly " + spiders 
   				  + " spiders in zone " + zone + ". Therefore, " + (spiders + 1)
   				  + " disjunctively connected sub-diagrams were created ranging from 0 to "
@@ -560,15 +560,19 @@ public class Translate {
 	  }
 	  else if (rule.equals("Split Conjunction")){
 		  SubDiagramIndexArg scarg = (SubDiagramIndexArg) arg;
+		  int subgoal = scarg.getSubgoalIndex();
+		  conjunctionNumbering(sdg1[subgoal]);
 		  int scSub = scarg.getSubDiagramIndex();
-		  return "conjunction split was applied in sub-diagram " + scSub
+		  return "conjunction split was applied in " + csubs[scSub]
 				  + ". The result is two new subgoals for each of the two"
 				  + " conjunctively connected sub-diagrams";
 	  }
   	  else if (rule.equals("Split Disjunction")){
   		  SubDiagramIndexArg sdarg = (SubDiagramIndexArg) arg;
+  		  int subgoal = sdarg.getSubgoalIndex();
+		  conjunctionNumbering(sdg1[subgoal]);
 		  int sdSub = sdarg.getSubDiagramIndex();
-		  return "disjunction split was applied in sub-diagram " + sdSub
+		  return "disjunction split was applied in " + csubs[sdSub]
 				  + ". The result is two new subgoals for each of the two"
 				  + " disjunctively connected sub-diagrams";
 	  }
@@ -577,9 +581,7 @@ public class Translate {
 		  int zonesCount = 0;
   		  
   		  for (int i = 0; i < sdg1.length; i++){
-			  //System.out.println("sdg1[] length: " + sdg1.length + "\n");
 			  for (int j = 1; j <= sdg1[i].getSubDiagramAt(1).getSubDiagramCount(); j++){
-				  //System.out.println("subs count: " + sdg1[i].getSubDiagramCount() + "\n");
 				  if (sdg1[i].getSubDiagramAt(j).getSubDiagramCount() == 1){
 					  PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(j);
 					  PrimarySpiderDiagram sd2 = null;
@@ -588,11 +590,7 @@ public class Translate {
 						  sd2 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(sdg1[i].getSubDiagramAt(1).getSubDiagramCount() + j);
 					  else
 						  sd2 = (PrimarySpiderDiagram) sdg2[i].getSubDiagramAt(j);
-					  System.out.println(sdg1[i].getSubDiagramAt(1).getSubDiagramCount() + 2);
-					  //Zone[] prZones2 = (Zone[])sd2.getPresentZones().toArray();
 					  SortedSet<Zone> prZones2 = sd2.getPresentZones();
-					  //System.out.println("Zones count: " + prZones1.size() + "\n");
-					  //System.out.println("Zones count: " + prZones2.size() + "\n");
 					  
 					  String[] subZones = new String[100]; 
 					  int subCount = 0;
@@ -617,12 +615,6 @@ public class Translate {
 		  		  		  
 		  		  		  newZones[zonesCount] = subString;
 		  		  		  zonesCount++;
-	  					  /*
-	  						for (int k = 0; k < prZones2.length; k++){
-	  							if (!prZones1.contains(prZones2[k]))
-	  								newZones = newZones + prZones2[k].toString() + ", ";
-	  						}
-	  					   */
 					  }
 				  }
 			  }
@@ -634,8 +626,7 @@ public class Translate {
 		  if (zonesCount > 1)
 			  zoneString = zoneString + " and " + newZones[zonesCount - 1];
   		
-  		  return "all the missing zones were introduced in the diagram as shaded zones."
-  				+ " This includes the zones " + zoneString + ".";
+  		  return "all the missing zones were introduced in the diagram as shaded zones.";
   		  
   	  }
   	  else if (rule.equals("Introduce All Shaded Zones (Deepest)")){
@@ -643,17 +634,13 @@ public class Translate {
 		  int zonesCount = 0;
 
   		  for (int i = 0; i < sdg1.length; i++){
-  			  //System.out.println("sdg1[] length: " + sdg1.length + "\n");
   			  for (int j = 0; j < sdg1[i].getSubDiagramCount(); j++){
-  				  //System.out.println("subs count: " + sdg1[i].getSubDiagramCount() + "\n");
   				  if (sdg1[i].getSubDiagramAt(j).getSubDiagramCount() == 1){
+  					  diagramNumbering(sdg1[i]);
   					  PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(j);
   					  SortedSet<Zone> prZones1 = sd1.getPresentZones();
   					  PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sdg2[i].getSubDiagramAt(j);
-  					  //Zone[] prZones2 = (Zone[])sd2.getPresentZones().toArray();
   					  SortedSet<Zone> prZones2 = sd2.getPresentZones();
-  					  //System.out.println("Zones count: " + prZones1.size() + "\n");
-  					  //System.out.println("Zones count: " + prZones2.size() + "\n");
   					  
   					  String[] subZones = new String[100]; 
   					  int subCount = 0;
@@ -674,15 +661,9 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subZones[subCount - 1];
-		  		  		  subString = subString + " from sub-diagram " + j;
+		  		  		  subString = subString + " from " + subs[j];
 		  		  		  newZones[zonesCount] = subString;
 		  		  		  zonesCount++;
-	  					  /*
-	  						for (int k = 0; k < prZones2.length; k++){
-	  							if (!prZones1.contains(prZones2[k]))
-	  								newZones = newZones + prZones2[k].toString() + ", ";
-	  						}
-	  					   */
   					  }
   				  }
   			  }
@@ -706,6 +687,7 @@ public class Translate {
   		  for (int i = 0; i < sdg1.length; i++){
 			  for (int j = 0; j < sdg1[i].getSubDiagramCount(); j++){
 				  if (sdg1[i].getSubDiagramAt(j).getSubDiagramCount() == 1){
+					  diagramNumbering(sdg1[i]);
 					  PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(j);
 					  SortedSet<String> contours1 = sd1.getAllContours();
 					  PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sdg2[i].getSubDiagramAt(j);
@@ -733,7 +715,7 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subContours[subCount - 1];
-		  		  		  subString = subString + " in sub-diagram " + j;
+		  		  		  subString = subString + " in " + subs[j];
 		  		  		  newContours[conCount] = subString;
 		  		  		  conCount++;
 					  }
@@ -760,6 +742,7 @@ public class Translate {
 		  for (int i = 0; i < sdg1.length; i++){
 			  for (int j = 0; j < sdg1[i].getSubDiagramCount(); j++){
 				  if (sdg1[i].getSubDiagramAt(j).getSubDiagramCount() == 1){
+					  diagramNumbering(sdg1[i]);
 					  PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(j);
 					  SortedSet<String> contours1 = sd1.getAllContours();
 					  PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sdg2[i].getSubDiagramAt(j);
@@ -787,7 +770,7 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subContours[subCount - 1];
-		  		  		  subString = subString + " in sub-diagram " + j;
+		  		  		  subString = subString + " in " + subs[j];
 		  		  		  newContours[conCount] = subString;
 		  		  		  conCount++;
 					  }
@@ -811,6 +794,8 @@ public class Translate {
   	  else if (rule.equals("Combine All Diagrams")){
   		  int i = 0, c = 0;		 
 		  int[] subArray = new int[apps.size()];
+		  diagramNumbering(sdg1[0]);
+		  conjunctionNumbering(sdg1[0]);
 		  
 		  Iterator<InferenceApplication> it = apps.iterator();
 		  while (it.hasNext()){
@@ -821,50 +806,17 @@ public class Translate {
 		  }
 		  int comCount = apps.size();
 		  
-		  /*
-		  int conCount = 0;
-		  int com1[] = new int[100];
-		  int com2[] = new int[100];
-		  int f = 0;
-		 
-		  for (int i = 0; i < sdg1.length; i++){
-			  f = 0;
-			  int t = 1;
-			  com1[0] = 1;
-			  com2[0] = 1;
-			  while ((f < t)){
-				  if (sdg1[i].getSubDiagramAt(com1[f]).getSubDiagramCount() > 1){
-					  CompoundSpiderDiagram csdg = (CompoundSpiderDiagram) sdg1[i].getSubDiagramAt(com1[f]);
-					  if ((csdg.getOperator().getName() == "op &") &&
-						(sdg2[i].getSubDiagramAt(com2[f]).getSubDiagramCount() == 1))
-						  f++;
-					  else if ((csdg.getOperator().getName() == "op &") &&
-						(sdg2[i].getSubDiagramAt(com2[f]).getSubDiagramCount() > 1)){
-						  t++;
-						  com1[f]++;
-						  com2[f]++;
-						  f++;
-						  com1[f] = com1[f - 1] + sdg1[i].getSubDiagramAt(com1[f-1]).getSubDiagramCount();
-						  com2[f] = com2[f - 1] + sdg2[i].getSubDiagramAt(com2[f-1]).getSubDiagramCount();
-					  }
-				  }
-				  else
-					  f++;
-			  }
-		  }
-		  */
-		  
 		  if (comCount == 1)
-			  return "The conjunctively connected sub-diagrams in sub-diagram " + subArray[0]
+			  return "The conjunctively connected sub-diagrams in " + csubs[subArray[0]]
 				  + " were combined into one unitary diagram.";
 		  
 		  
 		  String subString = "" + subArray[0];
 		  for (i = 1; i < comCount - 1; i++){
-			  subString = subString + ", " + subArray[i];
+			  subString = subString + ", " + csubs[subArray[i]];
 		  }
 		  if (comCount > 1)
-			  subString = subString + " and " + subArray[comCount - 1];
+			  subString = subString + " and " + csubs[subArray[comCount - 1]];
   		  
   		  return "For every conjunction of unitary diagrams where combination"
   				  + " was possible, the sub-diagrams were combined into one unitary diagram."
@@ -876,17 +828,13 @@ public class Translate {
 		  int zonesCount = 0;
 
 		  for (int i = 0; i < sdg1.length; i++){
-			  //System.out.println("sdg1[] length: " + sdg1.length + "\n");
 			  for (int j = 0; j < sdg1[i].getSubDiagramCount(); j++){
-				  //System.out.println("subs count: " + sdg1[i].getSubDiagramCount() + "\n");
 				  if (sdg1[i].getSubDiagramAt(j).getSubDiagramCount() == 1){
+					  diagramNumbering(sdg1[i]);
 					  PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(j);
 					  SortedSet<Zone> prZones1 = sd1.getPresentZones();
 					  PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sdg2[i].getSubDiagramAt(j);
-					  //Zone[] prZones2 = (Zone[])sd2.getPresentZones().toArray();
 					  SortedSet<Zone> prZones2 = sd2.getPresentZones();
-					  //System.out.println("Zones count: " + prZones1.size() + "\n");
-					  //System.out.println("Zones count: " + prZones2.size() + "\n");
 					  
 					  String[] subZones = new String[100]; 
 					  int subCount = 0;
@@ -907,15 +855,9 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subZones[subCount - 1];
-		  		  		  subString = subString + " in sub-diagram " + j;
+		  		  		  subString = subString + " in " + subs[j];
 		  		  		  newZones[zonesCount] = subString;
 		  		  		  zonesCount++;
-	  					  /*
-	  						for (int k = 0; k < prZones2.length; k++){
-	  							if (!prZones1.contains(prZones2[k]))
-	  								newZones = newZones + prZones2[k].toString() + ", ";
-	  						}
-	  					   */
 					  }
 				  }
 			  }
@@ -940,17 +882,13 @@ public class Translate {
 		  int zonesCount = 0;
 
 		  for (int i = 0; i < sdg1.length; i++){
-			  //System.out.println("sdg1[] length: " + sdg1.length + "\n");
 			  for (int j = 0; j < sdg1[i].getSubDiagramCount(); j++){
-				  //System.out.println("subs count: " + sdg1[i].getSubDiagramCount() + "\n");
 				  if (sdg1[i].getSubDiagramAt(j).getSubDiagramCount() == 1){
+					  diagramNumbering(sdg1[i]);
 					  PrimarySpiderDiagram sd1 = (PrimarySpiderDiagram) sdg1[i].getSubDiagramAt(j);
 					  SortedSet<Zone> prZones1 = sd1.getPresentZones();
 					  PrimarySpiderDiagram sd2 = (PrimarySpiderDiagram) sdg2[i].getSubDiagramAt(j);
-					  //Zone[] prZones2 = (Zone[])sd2.getPresentZones().toArray();
 					  SortedSet<Zone> prZones2 = sd2.getPresentZones();
-					  //System.out.println("Zones count: " + prZones1.size() + "\n");
-					  //System.out.println("Zones count: " + prZones2.size() + "\n");
 					  
 					  String[] subZones = new String[100]; 
 					  int subCount = 0;
@@ -971,15 +909,9 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subZones[subCount - 1];
-		  		  		  subString = subString + " from sub-diagram " + j;
+		  		  		  subString = subString + " from " + subs[j];
 		  		  		  newZones[zonesCount] = subString;
 		  		  		  zonesCount++;
-	  					  /*
-	  						for (int k = 0; k < prZones2.length; k++){
-	  							if (!prZones1.contains(prZones2[k]))
-	  								newZones = newZones + prZones2[k].toString() + ", ";
-	  						}
-	  					   */
 					  }
 				  }
 			  }
@@ -993,7 +925,7 @@ public class Translate {
  		  		
  		  return "Shaded zones were removed from diagrams"
    		  		+ " that are part of a conjunction, and between which contours can be copied"
-   		  		+ " Specifically, the introduced zones are: " + zoneString;
+   		  		+ " Specifically, these zones are: " + zoneString;
 		  
 	  }
  	  else if (rule.equals("Match Conclusion")){
@@ -1205,148 +1137,6 @@ public class Translate {
 		  		  translation += "the shaded zones " + temp + " were removed. ";
 		  }
 		  
-		  
-		  
-		  
- 		  /*
-		  SortedSet<String> contours1 = sd1.getAllContours();
-		  SortedSet<String> contours2 = sd2.getAllContours();
-		  
-		  String[] subContours = new String[100]; 
-		  int subCount = 0;
-		  String subString = "";
-		  String zoneString = "";
-		  String zoneString2 = "";
-		  
-		  Iterator<String> it = contours2.iterator();
-		  while (it.hasNext()) {
-			  String s = it.next();
-			  if (!contours1.contains(s)){
-				  subContours[subCount] = s;
-				  subCount++;
-			  }
-				
-		  }
-		  if (subCount > 0){
-				  subString = "a new contour with label";
-				  if (subCount > 1)
-					  subString = "new contours with labels";
-				  subString = subString + " " + subContours[0];
-		  		  for (int l = 1; l < subCount - 1; l++){
-		  			  subString = ", " + subString + subContours[l];
-		  		  }
-		  		  if (subCount > 1)
-		  			  subString = subString + " and " + subContours[subCount - 1]
-		  					+ " were introduced to sub-diagram 1";
-		  		  else 
-		  			  subString = subString + " was introduced to sub-diagram 1";
-		  }
-		  
-		  int subCount2 = 0;
-		  String subString2 = "";
-		  Iterator<String> it2 = contours1.iterator();
-		  while (it2.hasNext()) {
-			  String s = it2.next();
-			  if (!contours2.contains(s)){
-				  subContours[subCount2] = s;
-				  subCount2++;
-			  }
-				
-		  }
-		  if (subCount2 > 0){
-			  if (subCount > 0)
-				  subString2 = " and ";
-			  subString2 += "the contour";
-			  if (subCount2 > 1)
-				  subString2 = subString2 + "s";
-			  subString2 = subString2 + " " + subContours[0];
-	  		  for (int l = 1; l < subCount2 - 1; l++){
-	  			  subString2 = ", " + subString2 + subContours[l];
-	  		  }
-	  		  if (subCount2 > 1)
-	  			  subString2 = subString2 + " and " + subContours[subCount2 - 1]
-	  					+ " were erased from sub-diagram 1.";
-	  		  else 
-	  			  subString2 = subString2 + " was erased from sub-diagram 1.";
-		  }
-		  
-		  SortedSet<Zone> zones1 = sd1.getShadedZones();
-		  SortedSet<Zone> zones2 = sd2.getShadedZones();
-		  
-		  String[] subZones = new String[100]; 
-		  int zoneCount = 0;
-		  
-		  Iterator<Zone> it3 = zones1.iterator();
-		  while (it3.hasNext()) {
-			  Zone z = it3.next();
-			  if (!zones2.contains(z)){
-				  subZones[zoneCount] = z.toString2();
-				  zoneCount++;
-			  }
-				
-		  }
-		  if (zoneCount > 0){
-			  zoneString = "the shaded zone";
-			  if (zoneCount > 1)
-				  zoneString = zoneString + "s";
-			  zoneString = zoneString + " " + subZones[0];
-	  		  for (int l = 1; l < zoneCount - 1; l++){
-	  			  zoneString = zoneString + ", " + subZones[l];
-	  		  }
-	  		  if (zoneCount > 1)
-	  			  zoneString = zoneString + " and " + subZones[zoneCount - 1];
-	  		  zoneString = "all the shaded zones that were present only in the consequent, were introduced"
-	  				  + " to the antecedent and then those that were only shaded in the"
-	  				  + " antecedent were erased. These are " + zoneString + ".";
-	  		  if (subCount > 0)
-	  			  zoneString = " Furthermore, " + zoneString;
-		  }
-		  
-		  
-		  zones1 = sd1.getPresentZones();
-		  zones2 = sd2.getPresentZones();
-		  int zoneCount2 = 0;
-		  
-		  Iterator<Zone> it4 = zones1.iterator();
-		  while (it4.hasNext()) {
-			  Zone z = it4.next();
-			  if (!zones2.contains(z)){
-				  subZones[zoneCount2] = z.toString2();
-				  zoneCount2++;
-			  }
-				
-		  }
-		  if (zoneCount2 > 0){
-			  zoneString2 = "the shaded zone";
-			  if (zoneCount2 > 1)
-				  zoneString2 = zoneString2 + "s";
-			  zoneString2 = zoneString2 + " " + subZones[0];
-	  		  for (int l = 1; l < zoneCount2 - 1; l++){
-	  			  zoneString2 = zoneString2 + ", " + subZones[l];
-	  		  }
-	  		  if (zoneCount2 > 1)
-	  			  zoneString2 = zoneString2 + " and " + subZones[zoneCount2 - 1]
-	  		  		+ " were removed from sub-diagram 1.";
-	  		  else
-	  			  zoneString2 = zoneString2 + " was removed from sub-diagram 1.";
-	  		  zoneString2 = "the shaded zones that were present only in the antecedent"
-	  				  + ", were removed from the diagram. Specifically, " + zoneString2;   
-	  		  if ((subCount > 0) && (zoneCount > 0))
-	  			  zoneString2 = " Finally, " + zoneString2;
-	  		  else if ((subCount > 0) || (zoneCount > 0))
-	  			  zoneString2 = " Then, " + zoneString2;
-		  }
-		  
-		  
-		  if (sdg2 == null)
-			  return "In order to match the antecedent with the consequent, " + subString
-					  + subString2 + zoneString + zoneString2 + " Since the resulting diagrams were equal"
-					  + ", the proof is finished.";
-		  return "In order to match the antecedent with the consequent, " + subString
-				  + subString2 + zoneString + zoneString2 + ".";
-		  
-			*/
-		  
 		  if (sdg2 == null)
 			  translation += "Since the resulting diagrams were equal, the proof is finished.";
   	  	  return translation;
@@ -1358,6 +1148,7 @@ public class Translate {
 		  String re = "";
 		 
 		  for (int i = 0; i < sdg1.length; i++){
+			  diagramNumbering(sdg1[i]);
 			  int com1[] = new int[sdg2[i].getSubDiagramCount()];
 			  int com2[] = new int[sdg2[i].getSubDiagramCount()];
 			  int f = 0, t = 1;
@@ -1420,9 +1211,9 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subContours[subCount - 1]
-		  		  					+ " were copied to sub-diagram " + com1[j];
+		  		  					+ " were copied to " + subs[com1[j]];
 		  		  		  else 
-		  		  			  subString = subString + " was copied to sub-diagram " + com1[j];
+		  		  			  subString = subString + " was copied to " + subs[com1[j]];
 		  		  		  newContours[conCount] = subString;
 		  		  		  conCount++;
 					  }
@@ -1441,7 +1232,7 @@ public class Translate {
 						  subCount++;
 					  }
 					  if (subCount > 0){
-	  					  String subString = "the sub-diagrams of sub-diagram " + com1[j] 
+	  					  String subString = "the sub-diagrams of " + subs[com1[j]] 
 	  							  + " were combined in one diagram which now includes contour";
 	  					  if (subCount > 1)
 	  						  subString = subString + "s";
@@ -1490,6 +1281,7 @@ public class Translate {
 		  String re = "";
 		 
 		  for (int i = 0; i < sdg1.length; i++){
+			  diagramNumbering(sdg1[i]);
 			  int com1[] = new int[sdg2[i].getSubDiagramCount()];
 			  int com2[] = new int[sdg2[i].getSubDiagramCount()];
 			  int f = 0, t = 1;
@@ -1524,7 +1316,6 @@ public class Translate {
 					  com2[f] = q2.remove();
 					  f++;
 				  }	  
-				  System.out.println(f + " " + t);
 			  }
 			  Arrays.sort(com1);
 			  Arrays.sort(com2);
@@ -1537,7 +1328,6 @@ public class Translate {
 			  for (int z = 0; z < f; z ++)
 				  comB = comB + com2[z] + " ";
 			  re = comA + "\n" + comB;
-			  System.out.println(re);
 			  
 			  
 			  
@@ -1570,9 +1360,9 @@ public class Translate {
 		  		  		  }
 		  		  		  if (subCount > 1)
 		  		  			  subString = subString + " and " + subZones[subCount - 1]
-		  		  					+ " were copied to sub-diagram " + com1[j];
+		  		  					+ " were copied to " + subs[com1[j]];
 		  		  		  else
-		  		  			  subString = subString + " was copied to sub-diagram " + com1[j];
+		  		  			  subString = subString + " was copied to " + subs[com1[j]];
 		  		  		  newZones[zonesCount] = subString;
 		  		  		  zonesCount++;
 					  }
@@ -1591,7 +1381,7 @@ public class Translate {
 						  subCount++;
 					  }
 					  if (subCount > 0){
-	  					  String subString = "the sub-diagrams of sub-diagram " + com1[j] 
+	  					  String subString = "the sub-diagrams of " + subs[com1[j]] 
 	  							  + " were combined in one diagram which now includes shaded zone";
 	  					  if (subCount > 1)
 	  						  subString = subString + "s";
@@ -1636,11 +1426,6 @@ public class Translate {
  		  return translation;
 	  }
  	  else if (rule.equals("Venn (Breadth)")){
- 		  /*
- 		  int sdid = sdg1[0].getSubDiagramAt(1).getSubDiagramCount() + 1;
- 		  return "All the diagrams were turned into Venn Diagrams using Breadth-First-Search."
- 				  + " Then, they were matched with the consequent (sub-diagram " + sdid + ").";
- 			*/
  		  String translation = "";
 		  int i = 0;
 		  Goals newGoals = initGoals;

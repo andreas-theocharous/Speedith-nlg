@@ -315,6 +315,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement, Serializabl
         return sb.toString();
     }
     
+    //Andreas Theocharous
     public String toString2() {
     	String in = "";
     	String out = "";
@@ -327,11 +328,11 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement, Serializabl
 				inArr[inCount] = itIn.next();
 				inCount++;
 			}
-			in = "inside " + inArr[0];
+			in = "" + inArr[0];
 			for (int i = 1; i < inCount - 1; i++)
-				in = in + ", " + inArr[i];
+				in = in + " \u2229 " + inArr[i];
 			if (inCount > 1)
-				in = in + " and " + inArr[inCount - 1];
+				in = in + " \u2229 " + inArr[inCount - 1];
     	}
 		
     	if (outContours.size() > 0){
@@ -342,11 +343,11 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement, Serializabl
 				outArr[outCount] = itOut.next();
 				outCount++;
 			}
-			out = "out of " + outArr[0];
+			out = "" + outArr[0];
 			for (int i = 1; i < outCount - 1; i++)
-				out = out + ", " + outArr[i];
+				out = out + " \u222a " + outArr[i];
 			if (outCount > 1)
-				out = out + " and " + outArr[outCount - 1];
+				out = out + " \u222a " + outArr[outCount - 1];
     	}
 		
     	if (outContours.isEmpty())
@@ -354,7 +355,7 @@ public class Zone implements Comparable<Zone>, SpiderDiagramElement, Serializabl
     	else if (inContours.isEmpty())
     		return "inside no Contour";
     	
-    	return in + ", but " + out;
+    	return in + " - " + out;
     }
 
     public SortedSet<String> getAllContours() {

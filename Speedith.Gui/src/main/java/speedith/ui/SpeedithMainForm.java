@@ -126,6 +126,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JMenu proofMenu;
   private javax.swing.JMenuItem cropProof;
   private javax.swing.JMenuItem inspectProof;
+  private javax.swing.JSplitPane mainSplitPane;
+  private javax.swing.JSplitPane speedithSplitPane;
 
 
   private javax.swing.JFileChooser goalFileChooser;
@@ -143,7 +145,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private javax.swing.JButton extendByOneStep;
   private javax.swing.JButton showProof;
   
-  private JTextArea nlproof = new JTextArea(30,30);
+  private JTextArea nlproof = new JTextArea(5,100);
 
   /**
    * Creates new form SpeedithMainForm
@@ -241,7 +243,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
       @Override
       public void proofReplaced(ProofReplacedEvent e) {
-        System.out.println("Proof replaced");
         disableAutomaticProofUI();
         if (proofPanel1.isFinished()) {
           cancelAutoProver.setEnabled(false);
@@ -261,7 +262,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 
       @Override
       public void proofExtendedByStep(ProofExtendedByStepEvent e) {
-        System.out.println("Proof extended by a single step");
         if (proofPanel1.isFinished()) {
           disableAutomaticProofUI();
           cancelAutoProver.setEnabled(false);
@@ -304,9 +304,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void initComponents() {
     java.awt.GridBagConstraints gridBagConstraints;
 
-    javax.swing.JSplitPane mainSplitPane = new javax.swing.JSplitPane();
+    mainSplitPane = new javax.swing.JSplitPane();
+    speedithSplitPane = new javax.swing.JSplitPane(JSplitPane.VERTICAL_SPLIT);
     proofPanel1 = new speedith.ui.ProofPanel();
-    javax.swing.JSplitPane rightSplitPane = new javax.swing.JSplitPane();
+    //javax.swing.JSplitPane rightSplitPane = new javax.swing.JSplitPane();
     JPanel pnlRulesSidePane = new JPanel();
 	JPanel pnlNlg = new JPanel();
     JLabel lblAppliedRules = new JLabel();
@@ -342,12 +343,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("Speedith");
 
-    proofPanel1.setMinimumSize(new java.awt.Dimension(500, 300));
-    proofPanel1.setPreferredSize(new java.awt.Dimension(750, 300));
+    proofPanel1.setMinimumSize(new java.awt.Dimension(500, 600));
+    proofPanel1.setPreferredSize(new java.awt.Dimension(750, 600));
     mainSplitPane.setLeftComponent(proofPanel1);
 
-    pnlRulesSidePane.setMinimumSize(new java.awt.Dimension(200, 300));
-    pnlRulesSidePane.setPreferredSize(new java.awt.Dimension(200, 300));
+    pnlRulesSidePane.setMinimumSize(new java.awt.Dimension(200, 600));
+    pnlRulesSidePane.setPreferredSize(new java.awt.Dimension(200, 600));
     pnlRulesSidePane.setLayout(new java.awt.GridBagLayout());
 
     lblAppliedRules.setLabelFor(lstAppliedRules);
@@ -409,10 +410,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     gridBagConstraints.weighty = 1.0;
     gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
     pnlRulesSidePane.add(scrlPnlTactics,gridBagConstraints);
-    rightSplitPane.setLeftComponent(pnlRulesSidePane);
+    mainSplitPane.setRightComponent(pnlRulesSidePane);
 
-	pnlNlg.setMinimumSize(new java.awt.Dimension(100, 300));
-    pnlNlg.setPreferredSize(new java.awt.Dimension(100, 300));
+	pnlNlg.setMinimumSize(new java.awt.Dimension(500, 10));
+    pnlNlg.setPreferredSize(new java.awt.Dimension(750, 10));
     
     pnlNlg.setLayout(new FlowLayout()); 
     //nlproof.setMinimumSize(new java.awt.Dimension(100, 300));
@@ -440,9 +441,12 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     pnlNlg.add(nlproof);
     pnlNlg.add(showProof);
     
-	rightSplitPane.setRightComponent(pnlNlg);
+	//rightSplitPane.setRightComponent(pnlNlg);
 
-	mainSplitPane.setRightComponent(rightSplitPane);
+	//mainSplitPane.setRightComponent(rightSplitPane);
+	
+    speedithSplitPane.setTopComponent(mainSplitPane);
+    speedithSplitPane.setBottomComponent(pnlNlg);
 
     initMenuBar();
 
@@ -453,13 +457,13 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(autoToolBar)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
+                    .addComponent(speedithSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 995, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
             layout.createSequentialGroup()
                     .addComponent(autoToolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                             GroupLayout.PREFERRED_SIZE)
-                    .addComponent(mainSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                    .addComponent(speedithSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
     );
 
 
@@ -811,10 +815,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   private void cancelAutomaticProof() {
     if (automaticProof != null) {
       automaticProof.cancel(true);
-      System.out.println("Was Cancelled: "+automaticProof.isCancelled());
-      System.out.println("Is Finished: "+automaticProof.isFinished());
-      // remove the reference to the automatic prover thread so that the garbage
-      // collector can do its magic
       automaticProof = null;
 
     }
@@ -1045,10 +1045,8 @@ public class SpeedithMainForm extends javax.swing.JFrame {
             Proof result = get();
             if (result != null && result.isFinished()) {
               setProof(result);
-              System.out.println("Successful! ");
               enableAutomaticProofUI();
             } else {
-              System.out.println("Unsuccessful! ");
               proofFoundIndicator.setText("Unable to solve");
               cancelAutoProver.setEnabled(false);
             }
@@ -1208,8 +1206,6 @@ public class SpeedithMainForm extends javax.swing.JFrame {
   }//GEN-LAST:event_onRuleItemClicked
   
   
-  //public void nltranslate(SpiderDiagram[] sdg1, SpiderDiagram[] sdg2, InfRuleListItem rule)
-  
 
   private void onTacticClicked(MouseEvent e){
     if (e.getClickCount() == 2) {
@@ -1234,6 +1230,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     }
   }
   
+  //Andreas Theocharous
   private void stepProof(int ruleCount, String rule, Goals g1){
 	  nlproof.setText("");
 	  
@@ -1246,9 +1243,7 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 		        Iterator<InferenceApplication> it = app.iterator();
 		        while (it.hasNext()){
 		        	String appRule = it.next().getInference().toString();
-		        	System.out.println(appRule);
 		        }
-		        System.out.println();
 			} catch (RuleApplicationException e1) {
 				e1.printStackTrace();
 			}
@@ -1269,292 +1264,10 @@ public class SpeedithMainForm extends javax.swing.JFrame {
       nlproof.setText(nlproof.getText() + rt + "\n");
   }
   
-  /*
-  private void checkIntroContours(){
-	  int i = 0;
-	  DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
-	  
-	  while (i < ruleList.size()){
-		  int end = Translate.PossibleIntroShaded(ruleList, i);
-		  if ((end < ruleList.size()) && (end > i + 1)){
-			  Goals initG = allGoals.get(i); 
-			  ProofPanel temp = proofPanel1;
-			  proofPanel1 = new ProofPanel(initG);
-			  TacticListItem selectedRule = (TacticListItem) model.getElementAt(5);
-			  applyTactic(selectedRule);
-			  InferenceApplication newApp = proofPanel1.getInferenceApplicationAt(0);
-			  Goals g1 = allGoals.get(end);
-			  Goals g2 = proofPanel1.getGoalsAt(1);
-			  if (g1.equals(g2)){
-				  System.out.println("You could have just applied Introduce All Contours");
-				  
-				  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-				  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-				  allGoals.addAll(newList);
-				  
-				  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-				  if (i > 0)
-					  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-				  else
-					  allApps = new ArrayList<InferenceApplication>();
-				  allApps.add(newApp);
-				  allApps.addAll(newList2);
-				  
-				  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-				  if (i > 0)
-					  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-				  else
-					  ruleList = new ArrayList<String>();
-				  ruleList.add("Introduce All Contours");
-				  ruleList.addAll(newList3);
-			  }
-			  else{
-				  proofPanel1 = new ProofPanel(initG);
-				  selectedRule = (TacticListItem) model.getElementAt(6);
-				  applyTactic(selectedRule);
-				  newApp = proofPanel1.getInferenceApplicationAt(0);
-				  g2 = proofPanel1.getGoalsAt(1);
-				  if (g1.equals(g2)){
-					  System.out.println("You could have just applied Introduce All Contours (Deepest)");
-					  
-					  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-					  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-					  allGoals.addAll(newList);
-					  
-					  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-					  if (i > 0)
-						  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-					  else
-						  allApps = new ArrayList<InferenceApplication>();
-					  allApps.add(newApp);
-					  allApps.addAll(newList2);
-					  
-					  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-					  if (i > 0)
-						  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-					  else
-						  ruleList = new ArrayList<String>();
-					  ruleList.add("Introduce All Contours (Deepest)");
-					  ruleList.addAll(newList3);
-				  }
-			  }
-			  proofPanel1 = temp;
-		  }
-		  i = end;
-	  }
-  }
   
+  private static int[] indices = new int[50];
   
-  private void checkIntroShaded(){
-	  int i = 0;
-	  DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
-	  
-	  while (i < ruleList.size()){
-		  int end = Translate.PossibleIntroShaded(ruleList, i);
-		  if ((end < ruleList.size()) && (end > i + 1)){
-			  Goals initG = allGoals.get(i); 
-			  ProofPanel temp = proofPanel1;
-			  proofPanel1 = new ProofPanel(initG);
-			  TacticListItem selectedRule = (TacticListItem) model.getElementAt(7);
-			  applyTactic(selectedRule);
-			  InferenceApplication newApp = proofPanel1.getInferenceApplicationAt(0);
-			  Goals g1 = allGoals.get(end);
-			  Goals g2 = proofPanel1.getGoalsAt(1);
-			  if (g1.equals(g2)){
-				  System.out.println("You could have just applied Introduce All Shaded Zones");
-				  
-				  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-				  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-				  allGoals.addAll(newList);
-				  
-				  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-				  if (i > 0)
-					  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-				  else
-					  allApps = new ArrayList<InferenceApplication>();
-				  allApps.add(newApp);
-				  allApps.addAll(newList2);
-				  
-				  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-				  if (i > 0)
-					  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-				  else
-					  ruleList = new ArrayList<String>();
-				  ruleList.add("Introduce All Shaded Zones");
-				  ruleList.addAll(newList3);
-			  }
-			  else{
-				  proofPanel1 = new ProofPanel(initG);
-				  selectedRule = (TacticListItem) model.getElementAt(8);
-				  applyTactic(selectedRule);
-				  newApp = proofPanel1.getInferenceApplicationAt(0);
-				  g2 = proofPanel1.getGoalsAt(1);
-				  if (g1.equals(g2)){
-					  System.out.println("You could have just applied Introduce All Shaded Zones (Deepest)");
-					  
-					  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-					  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-					  allGoals.addAll(newList);
-					  
-					  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-					  if (i > 0)
-						  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-					  else
-						  allApps = new ArrayList<InferenceApplication>();
-					  allApps.add(newApp);
-					  allApps.addAll(newList2);
-					  
-					  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-					  if (i > 0)
-						  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-					  else
-						  ruleList = new ArrayList<String>();
-					  ruleList.add("Introduce All Shaded Zones (Deepest)");
-					  ruleList.addAll(newList3);
-				  }
-			  }
-			  proofPanel1 = temp;
-		  }
-		  i = end;
-	  }
-  }
-
-  
-  
-  
-  private void checkCopyContours(){
-	  int i = 0;
-	  DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
-	  
-	  while (i < ruleList.size()){
-		  int end = Translate.PossibleCopyContours(ruleList, i);
-		  if (end < ruleList.size()){
-			  Goals initG = allGoals.get(i); 
-			  ProofPanel temp = proofPanel1;
-			  proofPanel1 = new ProofPanel(initG);
-			  TacticListItem selectedRule = (TacticListItem) model.getElementAt(3);
-			  applyTactic(selectedRule);
-			  InferenceApplication newApp = proofPanel1.getInferenceApplicationAt(0);
-			  Goals g1 = allGoals.get(end);
-			  Goals g2 = proofPanel1.getGoalsAt(1);
-			  if (g1.equals(g2)){
-				  System.out.println("You could have just applied Copy Contours");
-				  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-				  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-				  allGoals.addAll(newList);
-				  
-				  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-				  if (i > 0)
-					  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-				  else
-					  allApps = new ArrayList<InferenceApplication>();
-				  allApps.add(newApp);
-				  allApps.addAll(newList2);
-				  
-				  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-				  if (i > 0)
-					  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-				  else
-					  ruleList = new ArrayList<String>();
-				  ruleList.add("Copy Contours");
-				  ruleList.addAll(newList3);
-			  }
-				  
-			  proofPanel1 = temp; 
-		  }
-		  i = end;
-	  }
-  }
-  
-  private void checkCombine(){
-	  int i = 0;
-	  DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
-	  
-	  while (i < ruleList.size()){
-		  int end = Translate.PossiblePropagateShading(ruleList, i);
-		  if ((end < ruleList.size()) && (end > i + 1)){
-			  Goals initG = allGoals.get(i); 
-			  ProofPanel temp = proofPanel1;
-			  proofPanel1 = new ProofPanel(initG);
-			  TacticListItem selectedRule = (TacticListItem) model.getElementAt(9);
-			  applyTactic(selectedRule);
-			  InferenceApplication newApp = proofPanel1.getInferenceApplicationAt(0);
-			  Goals g1 = allGoals.get(end);
-			  Goals g2 = proofPanel1.getGoalsAt(1);
-			  if (g1.equals(g2)){
-				  System.out.println("You could have just applied Combine All Diagrams");
-				  
-				  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-				  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-				  allGoals.addAll(newList);
-				  
-				  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-				  if (i > 0)
-					  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-				  else
-					  allApps = new ArrayList<InferenceApplication>();
-				  allApps.add(newApp);
-				  allApps.addAll(newList2);
-				  
-				  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-				  if (i > 0)
-					  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-				  else
-					  ruleList = new ArrayList<String>();
-				  ruleList.add("Combine All Diagrams");
-				  ruleList.addAll(newList3);
-			  }
-			  proofPanel1 = temp;
-		  }
-		  i = end;
-	  }
-  }
-  
-  private void checkPropagateShading(){
-	  int i = 0;
-	  DefaultComboBoxModel model = (DefaultComboBoxModel) lstTactics.getModel();
-	  
-	  while (i < ruleList.size()){
-		  int end = Translate.PossiblePropagateShading(ruleList, i);
-		  if (end < ruleList.size()){
-			  Goals initG = allGoals.get(i); 
-			  ProofPanel temp = proofPanel1;
-			  proofPanel1 = new ProofPanel(initG);
-			  TacticListItem selectedRule = (TacticListItem) model.getElementAt(12);
-			  applyTactic(selectedRule);
-			  InferenceApplication newApp = proofPanel1.getInferenceApplicationAt(0);
-			  Goals g1 = allGoals.get(end);
-			  Goals g2 = proofPanel1.getGoalsAt(1);
-			  if (g1.equals(g2)){
-				  System.out.println("You could have just applied Propagate Shading");
-				  
-				  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
-				  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
-				  allGoals.addAll(newList);
-				  
-				  List<InferenceApplication> newList2 = new ArrayList<InferenceApplication>(allApps.subList(end, allApps.size()));
-				  if (i > 0)
-					  allApps = new ArrayList<InferenceApplication>(allApps.subList(0, i));
-				  else
-					  allApps = new ArrayList<InferenceApplication>();
-				  allApps.add(newApp);
-				  allApps.addAll(newList2);
-				  
-				  ArrayList<String> newList3 = new ArrayList<String>(ruleList.subList(end, ruleList.size()));
-				  if (i > 0)
-					  ruleList = new ArrayList<String>(ruleList.subList(0, i)); 
-				  else
-					  ruleList = new ArrayList<String>();
-				  ruleList.add("Copy Contours");
-				  ruleList.addAll(newList3);
-			  }
-			  proofPanel1 = temp;
-		  }
-		  i = end;
-	  }
-  }
-  */
-  
+  //Andreas Theocharous
   private void checkTactic(){
 	  int i, j;
 	  int ruleIndex[] = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12};
@@ -1575,11 +1288,9 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 				  Goals g2 = proofPanel1.getGoalsAt(1);
 				  if ((g1.toString().equals("Goals([])")) && (g2.toString().equals("Goals(null)"))){
 					  g2 = g1;
-				  System.out.println(g1.toString());
-				  System.out.println(g2.toString());
 				  }
 				  if (g1.equals(g2)){
-					  System.out.println("You could have just applied " + selectedRule.toString());
+					  indices[i + 1] = end;
 					  List<Goals> newList = new ArrayList<Goals>(allGoals.subList(end, allGoals.size()));
 					  allGoals = new ArrayList<Goals>(allGoals.subList(0, i + 1)); 
 					  allGoals.addAll(newList);
@@ -1610,11 +1321,14 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 	  }
   }
   
+  //Andreas Theocharous
   private void fullproof (){
-	  int i = 0, counter = 0;
+	  int i, counter = 0;
 	  allGoals = new ArrayList<Goals>(proofPanel1.getGoals());
 	  allApps = new ArrayList<InferenceApplication>(proofPanel1.getInferenceApplications());
 	  ArrayList<String> ruleListTemp = new ArrayList<String>();
+	  for (i = 0; i < 50; i++)
+		  indices[i] = 0;
 	  
 	  ruleList.clear();
 	  for (i = 0; i < proofPanel1.getInferenceApplicationCount(); i++){
@@ -1622,18 +1336,23 @@ public class SpeedithMainForm extends javax.swing.JFrame {
     	  ruleListTemp.add(proofPanel1.getInferenceApplicationAt(i).getInference().toString());
       }
 	  
-	  checkTactic();
-	  while (!ruleList.equals(ruleListTemp)){
-		  ruleListTemp.clear();
-		  ruleListTemp.addAll(ruleList);
+	  if (!allGoals.get(0).getGoalAt(0).toString().contains("spiders = [\"")){
 		  checkTactic();
+		  while (!ruleList.equals(ruleListTemp)){
+			  ruleListTemp.clear();
+			  ruleListTemp.addAll(ruleList);
+			  checkTactic();
+		  }
 	  }
 		  
+	  for (i = 1; i < 50; i++){
+		  if (indices[i] == 0)
+			  indices[i] = i;
+	  }
   	
 	  nlproof.setText("");
 	  
 	  String[] extra = new String[ruleList.size()];
-	  //extra[0] = "We need to show that...";
 	  
 	  i = 0;
 	  while (i < ruleList.size()){
@@ -1666,6 +1385,16 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 		  counter++;
 	  }
 	  
+	  List<SubgoalsPanel> subsPnl;
+	  subsPnl = proofPanel1.getSubgoals();
+	  GridBagConstraints gbc = new java.awt.GridBagConstraints();
+      gbc.fill = java.awt.GridBagConstraints.BOTH;
+      gbc.gridx = 0;
+      gbc.weightx = 1.0;
+      gbc.weighty = 1.0;
+      speedith.ui.ProofPanel proofPanel2 = new ProofPanel(proofPanel1.getInitialGoals());
+	  
+      int k = 0;
 	  for (i = 0; i < ruleList.size(); i++){
 		  Goals g1 = allGoals.get(i);
 		  SpiderDiagram[] sbg1 = g1.getGoals().toArray(new SpiderDiagram[g1.getGoalsCount()]);
@@ -1687,17 +1416,26 @@ public class SpeedithMainForm extends javax.swing.JFrame {
 		  String rt = Translate.ruleTranslation(sbg1, sbg2, ruleList.get(i), arg, app, g1);
 		  if (extra[i].charAt(extra[i].length() - 2) == '.')
 			  rt = rt.substring(0, 1).toUpperCase() + rt.substring(1);
-			  					  
+		  int pref_size = (int) (rt.length() / 150 + Math.pow(rt.length() % 150, 0)) * 16;		  	
+		  JTextArea next_step = new JTextArea();
+		  next_step.setMinimumSize(new java.awt.Dimension(500, pref_size));
+    	  next_step.setPreferredSize(new java.awt.Dimension(650, pref_size));
+		  next_step.setBorder(null);
+		  next_step.setEditable(false);
+		  next_step.setOpaque(true);
+		  next_step.setLineWrap(true);
+		  next_step.setWrapStyleWord(true);
 		  nlproof.setText(nlproof.getText() + extra[i] + rt);
-		  /*
-	        Goals g2 = proofPanel1.getLastGoals();
-	        SpiderDiagram[] sbg2 = null;
-	        if (!proofPanel1.isFinished())
-	        	sbg2 = g2.getGoals().toArray(new SpiderDiagram[g2.getGoalsCount()]);
-	        RuleArg arg = proofPanel1.getInferenceApplicationAt(proofPanel1.getInferenceApplicationCount()-1).getRuleArguments();
-	        nlproof.setText(nlproof.getText() + (Translations.nltranslate(sbg1, sbg2, selectedRule.toString(), arg)) + "\n");
-	        */
+		  next_step.setText(rt);
+
+		  proofPanel2.addTranslation(gbc, next_step);
+		  for (int j = indices[k] + 1; j <= indices[k + 1]; j++)
+			  if (j < subsPnl.size())
+				  proofPanel2.addSubgoal(gbc, subsPnl.get(j));
+		  k = indices[k + 1];
 	  }
+	  proofPanel1 = proofPanel2;
+      mainSplitPane.setLeftComponent(proofPanel1);
   }
 
   private void onTextInputClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onTextInputClicked

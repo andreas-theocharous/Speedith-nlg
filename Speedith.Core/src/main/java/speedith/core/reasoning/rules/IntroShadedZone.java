@@ -46,7 +46,7 @@ public class IntroShadedZone extends SimpleInferenceRule<MultipleRuleArgs>
 
     public static final String InferenceRuleName = "Introduce Shaded Zone";
 
-    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram);
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram);
     private static final long serialVersionUID = 5113694271453004231L;
 
     @Override

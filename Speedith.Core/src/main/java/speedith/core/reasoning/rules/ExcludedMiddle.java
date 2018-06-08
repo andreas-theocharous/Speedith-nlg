@@ -45,7 +45,7 @@ public class ExcludedMiddle extends UnaryForwardRule implements Serializable {
 
     public static final String InferenceRuleName = "Excluded Middle";
 
-    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.SpiderDiagram);
+    private static final Set<DiagramType> applicableTypes = EnumSet.of(DiagramType.EulerDiagram, DiagramType.SpiderDiagram);
     private static final long serialVersionUID = 7841176724648588879L;
 
     @Override
